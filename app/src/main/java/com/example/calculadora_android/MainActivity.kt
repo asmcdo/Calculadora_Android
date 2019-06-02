@@ -166,6 +166,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onDot(view : View) {//metodo para impedir que mais de um "." seja inserido no mesmo numero
+        if (this.expSaida.text.isNotEmpty()) {
+            this.expSaida.text = ""
+            this.expEntrada.text = "0."
+            this.unicoPonto = true
+
+            return
+        }
+
         if (!this.unicoPonto){
             val tamanho = this.expEntrada.text.toString().length
             val lastBrckt = this.onRetornaUltimoChar(tamanho)
@@ -184,17 +192,8 @@ class MainActivity : AppCompatActivity() {
             this.expEntrada.append(".")
             this.unicoPonto = true
         }
-        else {
-            if (this.expSaida.text.isNotEmpty()) {
-                this.expSaida.text = ""
-                this.unicoPonto = false
-                this.expEntrada.text = "0."
-
-                return
-            }
-
+        else
             this.alertaErro()
-        }
     }
 
     fun onEqual(view : View) {
