@@ -22,27 +22,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        expEntrada = findViewById(R.id.expEntrada)
-        expSaida = findViewById(R.id.expSaida)
+        this.expEntrada = findViewById(R.id.expEntrada)
+        this.expSaida = findViewById(R.id.expSaida)
     }
 
     private fun onRemoveParenthesis() {
-        parenteses.removeAt(parenteses.size - 1) //para cada ")", remove um "(" que estiver na lista
+        this.parenteses.removeAt(this.parenteses.size - 1) //para cada ")", remove um "(" que estiver na lista
     }
 
     private fun onRetornaUltimoChar(tamanho: Int) : CharSequence { //retorna o ultimo char da string contida na TextView
-        if(expEntrada.text.isNotEmpty())
-            return expEntrada.text.toString().subSequence(tamanho-1, tamanho)
+        return if(this.expEntrada.text.isNotEmpty())
+            this.expEntrada.text.toString().subSequence(tamanho-1, tamanho)
         else
-            return ""
+            ""
     }
 
     fun onBracket(view : View) {
         val parenthesis = (view as Button).text.toString()
         if(parenthesis == "(") {
-            if(!ultimoDigitO && expEntrada.text.isNotEmpty()) { //caso um "(" seja colocado apos um numero, sera indicado explicitamente que se trata de uma multiplicacao
-                val tamanho = expEntrada.text.toString().length
-                val lastChar = onRetornaUltimoChar(tamanho)
+            if(!this.ultimoDigitO && this.expEntrada.text.isNotEmpty()) { //caso um "(" seja colocado apos um numero, sera indicado explicitamente que se trata de uma multiplicacao
+                val tamanho = this.expEntrada.text.toString().length
+                val lastChar = this.onRetornaUltimoChar(tamanho)
 
                 if(lastChar == ".") {
                     this.alertaErro()
@@ -50,22 +50,22 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
                 else if(lastChar != "(")
-                    expEntrada.append("*")
+                    this.expEntrada.append("*")
             }
 
-            parenteses.add(parenthesis)
-            expEntrada.append((view).text)
+            this.parenteses.add(parenthesis)
+            this.expEntrada.append((view).text)
         }
         else {
-            if(((view).text) == ")" && ultimoDigitO) {
+            if(((view).text) == ")" && this.ultimoDigitO) {
                 this.alertaErro()
 
                 return
             }
 
-            if(parenteses.isNotEmpty()) {
+            if(this.parenteses.isNotEmpty()) {
                 this.onRemoveParenthesis()
-                expEntrada.append((view).text)
+                this.expEntrada.append((view).text)
             }
             else {
                 this.alertaErro()
@@ -75,79 +75,79 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        unicoPonto = false
+        this.unicoPonto = false
     }
 
     fun onBackspace(view : View) { //metodo que seleciona uma substring do tamanho-1 da string principal, para excluir o ultimo digito
-        if(expEntrada.text.isEmpty()) {
+        if(this.expEntrada.text.isEmpty()) {
             this.alertaErro()
         }
         else {
-            var tamanho = expEntrada.text.toString().length
-            var brckChar = onRetornaUltimoChar(tamanho) //guarda o ultimo digito antes de exclui-lo
+            var tamanho = this.expEntrada.text.toString().length
+            var brckChar = this.onRetornaUltimoChar(tamanho) //guarda o ultimo digito antes de exclui-lo
 
-            var expressao = this.expEntrada.text.removeRange(tamanho - 1, tamanho).toString()
-            expEntrada.text = expressao
+            val expressao = this.expEntrada.text.removeRange(tamanho - 1, tamanho).toString()
+            this.expEntrada.text = expressao
 
             if (brckChar == ")") //caso exclua um parentese fechando, é necessario adicionar novamente o parentese aberto
-                parenteses.add("(")
+                this.parenteses.add("(")
             else if (brckChar == "(")
                 this.onRemoveParenthesis() //se um parentese aberto for removido, deve ser retirado da lista tambem
             else if (brckChar == "+" || brckChar == "-" || brckChar == "*" || brckChar == "/")//caso seja removido um digito de operacao, deve ser possivel inseri-lo de novo
-                ultimoDigitO = false
+                this.ultimoDigitO = false
             else if (brckChar == ".")
-                unicoPonto = false
+                this.unicoPonto = false
 
             //verifico novamente o ultimo digito da expressao apos ter sido apagado, caso seja um operador, mostra o alerta de erro
-            tamanho = expEntrada.text.toString().length
-            brckChar = onRetornaUltimoChar(tamanho) //guarda o ultimo digito antes de exclui-lo
+            tamanho = this.expEntrada.text.toString().length
+            brckChar = this.onRetornaUltimoChar(tamanho) //guarda o ultimo digito antes de exclui-lo
 
             if (brckChar == "+" || brckChar == "-" || brckChar == "*" || brckChar == "/")
-                ultimoDigitO = true
+                this.ultimoDigitO = true
         }
     }
 
     fun onNumber(view : View){
-        if(expSaida.text.isNotEmpty()){ //se a saida contem algum valor, proximo numero digitado limpa as duas TextViews
+        if(this.expSaida.text.isNotEmpty()){ //se a saida contem algum valor, proximo numero digitado limpa as duas TextViews
             this.expEntrada.text = ""
             this.expSaida.text = ""
         }
 
-        if(ultimoDigitO) //se selecionado um numero apos a operacao, "ultimoDigito_O" é setado como falso para poder escolher mais operacoes se necessario
-            ultimoDigitO = false
+        if(this.ultimoDigitO) //se selecionado um numero apos a operacao, "ultimoDigito_O" é setado como falso para poder escolher mais operacoes se necessario
+            this.ultimoDigitO = false
 
-        expEntrada.append((view as Button).text)
+        this.expEntrada.append((view as Button).text)
     }
 
     private fun alertaErro() {
-        val alertaErro = AlertDialog.Builder(this@MainActivity)
+        val errorAlert = AlertDialog.Builder(this@MainActivity)
 
-        alertaErro.setTitle("Operação Inválida")
-        alertaErro.setMessage("Por favor digite uma operação válida.")
-        alertaErro.setPositiveButton("Ok") { //Gera o botao de "ok" no dialog mas nao mostra a Toast message
+        errorAlert.setTitle("Operação Inválida")
+        errorAlert.setMessage("Por favor digite uma operação válida.")
+        errorAlert.setPositiveButton("Ok") { //Gera o botao de "ok" no dialog mas nao mostra a Toast message
                 _,_ -> Toast.makeText(applicationContext, "", Toast.LENGTH_SHORT)
         }
 
-        val alert : AlertDialog = alertaErro.create()
+        val alert : AlertDialog = errorAlert.create()
         alert.show()
     }
 
     fun onOperator(view : View) {
-        if(expEntrada.text.isNotEmpty()) {//caso nao esteja vazia a entrada, é preciso saber qual o ultimo digito para validar se pode adicionar um operador
-            val tamanho = expEntrada.text.toString().length
-            val ultimoChar = onRetornaUltimoChar(tamanho)
+        if(this.expEntrada.text.isNotEmpty()) {//caso nao esteja vazia a entrada, é preciso saber qual o ultimo digito para validar se pode adicionar um operador
+            val tamanho = this.expEntrada.text.toString().length
+            val ultimoChar = this.onRetornaUltimoChar(tamanho)
 
             if (ultimoChar == "(") //Caso tenha sido aberto um parentese, nao deve ser possivel adicionar um operador
                 this.alertaErro()
             else {
-                if (ultimoDigitO || ultimoChar == ".")
+                if (this.ultimoDigitO || ultimoChar == ".")
                     this.alertaErro()
                 else {
-                    expEntrada.append((view as Button).text)
-                    ultimoDigitO = true //caso ultimo digito tenha sido um numero, pode-se escolher uma operacao apenas uma vez
+                    this.expEntrada.append((view as Button).text)
+                    this.ultimoDigitO = true //caso ultimo digito tenha sido um numero, pode-se escolher uma operacao apenas uma vez
 
-                    if (unicoPonto)
-                        unicoPonto = false //se havia um ".", depois de escolher a operacao pode-se selecionar mais um "." no proximo numero
+                    if (this.unicoPonto)
+                        this.unicoPonto = false //se havia um ".", depois de escolher a operacao pode-se selecionar mais um "." no proximo numero
                 }
             }
         }
@@ -156,51 +156,60 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClear(view : View) {//metodo para limpar a tela
-        if(unicoPonto)
-            unicoPonto = false
+        if(this.unicoPonto)
+            this.unicoPonto = false
 
         this.expEntrada.text = ""
         this.expSaida.text = ""
 
-        parenteses.clear()
+        this.parenteses.clear()
     }
 
     fun onDot(view : View) {//metodo para impedir que mais de um "." seja inserido no mesmo numero
-        if (!unicoPonto){
-            val tamanho = expEntrada.text.toString().length
-            val lastBrckt = onRetornaUltimoChar(tamanho)
+        if (!this.unicoPonto){
+            val tamanho = this.expEntrada.text.toString().length
+            val lastBrckt = this.onRetornaUltimoChar(tamanho)
 
-            if(expEntrada.text.isEmpty() || ultimoDigitO || lastBrckt == "(" )
-                    expEntrada.append("0")
-            else if(expEntrada.text.toString().isNotEmpty()) {
+            if(this.expEntrada.text.isEmpty() || this.ultimoDigitO || lastBrckt == "(" )
+                this.expEntrada.append("0")
+            else if(this.expEntrada.text.toString().isNotEmpty()) {
                 if(lastBrckt == ")") { //verifica se ultimo digito foi um parentese fechado, para indicar explicitamente a multiplicacao
-                    expEntrada.append("*0")
+                    this.expEntrada.append("*0")
 
-                    ultimoDigitO = true //seta como verdadeiro por ter sido mostrado em tela explicitamente que se trata de uma operacao
+                    this.ultimoDigitO = true //seta como verdadeiro por ter sido mostrado em tela explicitamente que se trata de uma operacao
                 }
 
             }
 
-            expEntrada.append(".")
-            unicoPonto = true
+            this.expEntrada.append(".")
+            this.unicoPonto = true
         }
-        else
+        else {
+            if (this.expSaida.text.isNotEmpty()) {
+                this.expSaida.text = ""
+                this.unicoPonto = false
+                this.expEntrada.text = "0."
+
+                return
+            }
+
             this.alertaErro()
+        }
     }
 
     fun onEqual(view : View) {
-        if(parenteses.isNotEmpty() || expEntrada.text.toString().isEmpty()
-            || expEntrada.text.toString().contains("()") || expEntrada.text.toString().contains("..")
-            || ultimoDigitO)
+        if(this.parenteses.isNotEmpty() || this.expEntrada.text.toString().isEmpty()
+            || this.expEntrada.text.toString().contains("()") || this.expEntrada.text.toString().contains("..")
+            || this.ultimoDigitO)
             this.alertaErro()
         else {
-            val expression = ExpressionBuilder(expEntrada.text.toString()).build()//ExpressionBuilder calcula a expressao contida dentro da TextView
+            val expression = ExpressionBuilder(this.expEntrada.text.toString()).build()//ExpressionBuilder calcula a expressao contida dentro da TextView
 
             try {
                 val result = expression.evaluate()
-                expSaida.text = "" //limpa o resultado para poder exibir o resultado da nova expressao
-                expSaida.append(result.toString())
-                parenteses.clear()
+                this.expSaida.text = "" //limpa o resultado para poder exibir o resultado da nova expressao
+                this.expSaida.append(result.toString())
+                this.parenteses.clear()
             } catch (ex : ArithmeticException) {
                 this.alertaErro()
             }
